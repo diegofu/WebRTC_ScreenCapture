@@ -36,7 +36,7 @@ app.get('/', function(req, res){
 app.post('/capture', function(req, res){
     var imageBuffer = decodeBase64Image(req.body.data);
     
-    fs.writeFile("images/out.png", imageBuffer.data, function(err) {
+    fs.writeFile("images/out" + Date.now() + ".png", imageBuffer.data, function(err) {
 	  console.log(err);
 	});
     res.writeHead(200, {'Content-Type': 'text/html'});
