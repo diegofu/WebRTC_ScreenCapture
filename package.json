@@ -1,0 +1,25 @@
+{
+  "name": "WebRTC",
+  "version": "1.0.0",
+  "description": "",
+  "main": "captureScreen.js",
+  "dependencies": {
+    "express": "^4.12.3",
+    "body-parser": "^1.12.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "supervisor captureScreen.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:diegofu/WebRTC_ScreenCapture.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/diegofu/WebRTC_ScreenCapture/issues"
+  },
+  "homepage": "https://github.com/diegofu/WebRTC_ScreenCapture"
+}

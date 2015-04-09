@@ -1,0 +1,57 @@
+<video autoplay></video>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<img src="">
+<canvas style="display:none;"></canvas>
+
+<script>
+	var errorCallback = function(e) {
+		console.log('Rejected', e);
+	}
+
+	navigator.getUserMedia = navigator.getUserMedia ||
+								navigator.webkitGetUserMedia ||
+								navigator.mozGetUserMedia ||
+								navigator.msGetUserMedia;
+
+	var video = document.querySelector('video');
+
+	if(navigator.getUserMedia) {
+		navigator.getUserMedia({
+			video: {
+				mandatory: {
+					maxWidth: 640,
+					maxHeight: 360
+				}
+			}
+		}, function(stream) {
+			video.src = window.URL.createObjectURL(stream);
+			localMediaStream = stream;
+		}, errorCallback);
+	} else {
+		video.src = 'somevideo.webm'
+	}
+
+	video.addEventListener('click', snapShot, false);
+
+	var canvas = document.querySelector('canvas');
+	canvas.setAttribute('height', 360);
+	canvas.setAttribute('width', 640);
+	var ctx = canvas.getContext('2d');
+	var localMediaStream = null;
+
+	function snapShot() {
+		if(localMediaStream) {
+			ctx.drawImage(video, 0, 0);
+			var image_data = canvas.toDataURL('image/png');
+			$.ajax({
+				type: 'post',
+				url: '/capture',
+				data: {data: image_data}
+			});
+
+			document.querySelector('img').src = image_data;
+		}
+	}
+
+
+</script>
