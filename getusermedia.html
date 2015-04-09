@@ -4,45 +4,49 @@
 <canvas style="display:none;"></canvas>
 
 <script>
-	var errorCallback = function(e) {
-		console.log('Rejected', e);
-	}
+var Pointstreak = Pointstreak || {}; 
+Pointstreak.screenCapturer = function(video, canvas, height, width) {
+	this.navigator = navigator;
+	this.video = video;
+	this.canvas = canvas;
+	this.height = height;
+	this.width = width;
+	this.localMediaStream = null;
+	var self = this;
 
 	navigator.getUserMedia = navigator.getUserMedia ||
-								navigator.webkitGetUserMedia ||
-								navigator.mozGetUserMedia ||
-								navigator.msGetUserMedia;
-
-	var video = document.querySelector('video');
-
+					navigator.webkitGetUserMedia ||
+					navigator.mozGetUserMedia ||
+					navigator.msGetUserMedia;
 	if(navigator.getUserMedia) {
 		navigator.getUserMedia({
 			video: {
 				mandatory: {
-					maxWidth: 640,
-					maxHeight: 360
+					maxWidth: this.width,
+					maxHeight: this.height
 				}
 			}
 		}, function(stream) {
-			video.src = window.URL.createObjectURL(stream);
-			localMediaStream = stream;
-		}, errorCallback);
+			this.video.src = window.URL.createObjectURL(stream);
+			this.localMediaStream = stream;
+		}, function(e) {
+			console.log('Rejected', e);
+		});
 	} else {
-		video.src = 'somevideo.webm'
+		this.video.src = 'somevideo.webm'
 	}
 
-	video.addEventListener('click', snapShot, false);
-
-	var canvas = document.querySelector('canvas');
-	canvas.setAttribute('height', 360);
-	canvas.setAttribute('width', 640);
+	canvas.setAttribute('height', this.height);
+	canvas.setAttribute('width', this.width);
 	var ctx = canvas.getContext('2d');
-	var localMediaStream = null;
+};
 
-	function snapShot() {
-		if(localMediaStream) {
-			ctx.drawImage(video, 0, 0);
-			var image_data = canvas.toDataURL('image/png');
+Pointstreak.screenCapturer.prototype = {
+	capture: function() {
+		if(self.localMediaStream) {
+			var ctx = self.canvas.getContext('2d');
+			ctx.drawImage(self.video, 0, 0);
+			var image_data = self.canvas.toDataURL('image/png');
 			$.ajax({
 				type: 'post',
 				url: '/capture',
@@ -53,5 +57,10 @@
 		}
 	}
 
+}
 
+var video = document.querySelector('video');
+var canvas = document.querySelector('canvas');
+var screenCapturer = new Pointstreak.screenCapturer(video, canvas, 360, 640);
+video.addEventListener('click', screenCapturer.capture, false);
 </script>
